@@ -22,12 +22,108 @@
 
     <include layout="@layout/content_main" />
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
+    <androidx.recyclerview.widget.RecyclerView
+        android:layout_marginTop="60dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/homepage_recyclerview"
+        android:scrollbars="vertical"
+        android:visibility="gone">
+    </androidx.recyclerview.widget.RecyclerView>
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_marginBottom="10dp"
+        android:layout_marginTop="60dp"
+        app:cardBackgroundColor="@color/colorPrimary"
+        app:contentPadding="10dp"
+        app:cardElevation="5dp"
+        app:cardCornerRadius="10dp"
+        android:layout_height="wrap_content"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:padding="5dp"
+        android:elevation="5dp"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        app:cardUseCompatPadding="true"
+        android:clickable="true"
+        android:focusable="true"
+        app:cardPreventCornerOverlap="true"
+        android:id="@+id/listitem_card">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:padding="10sp">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/listitem_relative_layout">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:id="@+id/center_mark"/>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_toLeftOf="@id/center_mark"
+                    android:id="@+id/left_area"/>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_toRightOf="@id/center_mark"
+                    android:id="@+id/right_area"/>
+
+                <ImageView
+                    android:layout_width="50sp"
+                    android:layout_height="50sp"
+                    android:id="@+id/listitem_logo"
+                    android:src="@color/cardview_dark_background"
+                    android:scaleType="centerCrop"
+                    android:visibility="gone"/>
+
+                <TextView
+                    android:id="@+id/Contact_Name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="10sp"
+                    android:layout_toRightOf="@id/listitem_logo"
+                    android:text="Example"
+                    android:textColor="@android:color/white"
+                    android:textSize="70sp"
+                    android:textStyle="bold"
+                    android:layout_centerInParent="true"
+                    android:textAlignment="center"/>
+
+            </RelativeLayout>
+
+
+
+
+
+
+
+
+        </RelativeLayout>
+    </androidx.cardview.widget.CardView>
+
+
+
+
+
+    <!-- <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:layout_margin="@dimen/fab_margin"
-        app:srcCompat="@android:drawable/ic_dialog_email" />
+        app:srcCompat="@android:drawable/ic_dialog_email" /> -->
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
+
