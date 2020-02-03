@@ -1,6 +1,7 @@
 package com.example.universalinterpreter;
 
 import android.app.Activity;
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -19,10 +20,15 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+import android.speech.RecognizerIntent;
+import android.speech.tts.TextToSpeech;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import java.util.ArrayList;
+import java.util.Locale;
 
 public class Chat extends AppCompatActivity {
 
@@ -39,6 +45,11 @@ public class Chat extends AppCompatActivity {
     String prev_cat;
     Boolean found = false;
     String client_email;
+    String input_mode;
+    String morse_input;
+    private final int REQ_CODE_SPEECH_INPUT = 100;
+    String email, message;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,6 +73,9 @@ public class Chat extends AppCompatActivity {
 
         preference = getApplicationContext().getSharedPreferences(PREFERENCE, Context.MODE_PRIVATE);
 
+
+        input_mode = preference.getString("input", "Text");
+
         if(getIntent().getBooleanExtra("New_Chat", true)==true) {
             inputText.setHint("Enter the Receiver's Email");
             outputText.setText("Enter the Receiver's Email");
@@ -69,7 +83,10 @@ public class Chat extends AppCompatActivity {
             centerarea.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View view) {
-                    final String email = inputText.getText().toString().trim().replace(".", "+");
+                    email = inputText.getText().toString().trim().replace(".", "+");
+                    if(input_mode.equals("Morse")) {
+                        email = MorsetoText(email);
+                    }
                     if(email.equals("")) {
                         Toast.makeText(Chat.this, "Kindly Enter an Email ID", Toast.LENGTH_SHORT).show();
                     } else {
@@ -100,6 +117,84 @@ public class Chat extends AppCompatActivity {
                     return true;
                 }
             });
+
+
+            //Input Code
+            if(input_mode.equals("Morse")) {
+                inputText.setKeyListener(null);
+                morse_input = inputText.getText().toString();
+                leftarea.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        try {
+                            morse_input = morse_input.substring(0, morse_input.length() - 1);
+                            inputText.setText(morse_input);
+                        } catch (Exception e) {
+
+                        }
+
+                    }
+                });
+                rightarea.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        morse_input = morse_input + ".";
+                        inputText.setText(morse_input);
+                    }
+                });
+                rightarea.setOnLongClickListener(new View.OnLongClickListener() {
+                    @Override
+                    public boolean onLongClick(View view) {
+                        morse_input = morse_input + "_";
+                        inputText.setText(morse_input);
+                        return true;
+                    }
+                });
+                leftarea.setOnLongClickListener(new View.OnLongClickListener() {
+                    @Override
+                    public boolean onLongClick(View view) {
+                        morse_input = morse_input + "\n";
+                        inputText.setText(morse_input);
+                        return true;
+                    }
+                });
+                centerarea.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        morse_input = morse_input + " ";
+                        inputText.setText(morse_input);
+                    }
+                });
+            }
+
+            if(input_mode.equals("Speech")) {
+
+                leftarea.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        try {
+                            inputText.setText(inputText.getText().toString().substring(0, inputText.getText().toString().length() - 1));
+                        } catch (Exception e) {
+                            
+                        }
+                    }
+                });
+                centerarea.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        promptSpeechInput();
+                    }
+                });
+                rightarea.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        promptSpeechInput();
+                    }
+                });
+
+            }
+
+
         } else {
             dbref.child(preference.getString("Email", "").replace(".", "+")).child("Chats").addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
@@ -136,7 +231,10 @@ public class Chat extends AppCompatActivity {
             centerarea.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View view) {
-                    final String message = inputText.getText().toString().trim();
+                    message = inputText.getText().toString().trim();
+                    if(input_mode.equals("Morse")) {
+                        message = MorsetoText(message);
+                    }
                     if(message.equals("")) {
                         Toast.makeText(activity, "Enter a valid message", Toast.LENGTH_SHORT).show();
                     } else {
@@ -206,9 +304,213 @@ public class Chat extends AppCompatActivity {
                 }
             });
 
+            //Input Code
+            if(input_mode.equals("Morse")) {
+                inputText.setKeyListener(null);
+                morse_input = inputText.getText().toString();
+                leftarea.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        try {
+                            morse_input = morse_input.substring(0, morse_input.length() - 1);
+                            inputText.setText(morse_input);
+                        } catch (Exception e) {
+
+                        }
+
+                    }
+                });
+                rightarea.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        morse_input = morse_input + ".";
+                        inputText.setText(morse_input);
+                    }
+                });
+                rightarea.setOnLongClickListener(new View.OnLongClickListener() {
+                    @Override
+                    public boolean onLongClick(View view) {
+                        morse_input = morse_input + "_";
+                        inputText.setText(morse_input);
+                        return true;
+                    }
+                });
+                leftarea.setOnLongClickListener(new View.OnLongClickListener() {
+                    @Override
+                    public boolean onLongClick(View view) {
+                        morse_input = morse_input + "\n";
+                        inputText.setText(morse_input);
+                        return true;
+                    }
+                });
+                centerarea.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        morse_input = morse_input + " ";
+                        inputText.setText(morse_input);
+                    }
+                });
+            }
+
+            if(input_mode.equals("Speech")) {
+
+                inputText.setKeyListener(null);
+
+
+                centerarea.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        promptSpeechInput();
+                    }
+                });
+                rightarea.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        promptSpeechInput();
+                    }
+                });
+                leftarea.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        try {
+                            inputText.setText(inputText.getText().toString().substring(0, inputText.getText().toString().length() - 1));
+                        } catch (Exception e) {
+
+                        }
+                    }
+                });
+
+            }
+
         }
 
 
+    }
+
+    /**
+     * Showing google speech input dialog
+     * */
+    private void promptSpeechInput() {
+        Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
+                RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault());
+        intent.putExtra(RecognizerIntent.EXTRA_PROMPT,
+                "Kindly Speak!");
+        try {
+            startActivityForResult(intent, REQ_CODE_SPEECH_INPUT);
+        } catch (ActivityNotFoundException a) {
+            Toast.makeText(getApplicationContext(),
+                    "Sorry, Speech not supported.",
+                    Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    /**
+     * Receiving speech input
+     * */
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        switch (requestCode) {
+            case REQ_CODE_SPEECH_INPUT: {
+                if (resultCode == RESULT_OK && null != data) {
+
+                    ArrayList<String> result = data
+                            .getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
+                    inputText.setText(result.get(0));
+                }
+                break;
+            }
+
+        }
+    }
+
+    String MorsetoText(String morse) {
+        String text = "";
+        String textArray[] = morse.split("       ");
+        for(int i = 0; i<textArray.length; i++) {
+            String signArray[] = textArray[i].split("   ");
+            for(int j = 0; j<signArray.length; j++) {
+                switch (signArray[j]) {
+
+                           case ". _"           : text = text + "A"; break;
+                           case "_ . . ."       : text = text + "B"; break;
+                           case "_ . _ ."       : text = text + "C"; break;
+                           case "_ . ."         : text = text + "D"; break;
+                           case "."             : text = text + "E"; break;
+                           case ". . _ ."       : text = text + "F"; break;
+                           case "_ _ ."         : text = text + "G"; break;
+                           case ". . . ."       : text = text + "H"; break;
+                           case ". ."           : text = text + "I"; break;
+                           case ". _ _ _"       : text = text + "J"; break;
+                           case "_ . _"         : text = text + "K"; break;
+                           case ". _ . ."       : text = text + "L"; break;
+                           case "_ _"           : text = text + "M"; break;
+                           case "_ ."           : text = text + "N"; break;
+                           case "_ _ _"         : text = text + "O"; break;
+                           case ". _ _ ."       : text = text + "P"; break;
+                           case "_ _ . _"       : text = text + "Q"; break;
+                           case ". _ ."         : text = text + "R"; break;
+                           case ". . ."         : text = text + "S"; break;
+                           case "_"             : text = text + "T"; break;
+                           case ". . _"         : text = text + "U"; break;
+                           case ". . . _"       : text = text + "V"; break;
+                           case ". _ _"         : text = text + "W"; break;
+                           case "_ . . _"       : text = text + "X"; break;
+                           case "_ . _ _"       : text = text + "Y"; break;
+                           case "_ _ . ."       : text = text + "Z"; break;
+                           case ". _ _ . _"     : text = text + "Å"; break;
+                           case ". _ . _"       : text = text + "Ä"; break;
+                           case "_ _ _ ."       : text = text + "Ö"; break;
+                           case ". . _ . ."     : text = text + "É"; break;
+                           case "_ _ . _ _"     : text = text + "Ñ"; break;
+                           case ". . _ _"       : text = text + "Ü"; break;
+                           case "_ _ _ _"       : text = text + "Š"; break;
+                           case ". . . _ _ . ." : text = text + "ß"; break;
+                           case "_ . _ . ."     : text = text + "Ç"; break;
+                           case ". _ _ _ _"     : text = text + "1"; break;
+                           case ". . _ _ _"     : text = text + "2"; break;
+                           case ". . . _ _"     : text = text + "3"; break;
+                           case ". . . . _"     : text = text + "4"; break;
+                           case ". . . . ."     : text = text + "5"; break;
+                           case "_ . . . ."     : text = text + "6"; break;
+                           case "_ _ . . ."     : text = text + "7"; break;
+                           case "_ _ _ . ."     : text = text + "8"; break;
+                           case "_ _ _ _ ."     : text = text + "9"; break;
+                           case "_ _ _ _ _"     : text = text + "0"; break;
+                           case ". . _ _ . ."   : text = text + "?"; break;
+                           case ". . _ _ ."     : text = text + "!"; break;
+                           case "_ _ . . _ _"   : text = text + ","; break;
+                           case ". _ . _ . _"   : text = text + "."; break;
+                           case "_ . . . _"     : text = text + "="; break;
+                           case "_ . . . . _"   : text = text + "-"; break;
+                           case "_ . _ _ ."     : text = text + "("; break;
+                           case "_ . _ _ . _"   : text = text + ")"; break;
+                           case ". . . . . . . .": text = text + "¤"; break;
+                           case ". _ . _ ."     : text = text + "+"; break;
+                           case ". . . _ . _"   : text = text + "Æ"; break;
+                           case ". _ _ . _ ."   : text = text + "@"; break;
+                           case "_ . . _ ."     : text = text + "/"; break;
+                           case ". _ _ . ."     : text = text + "%"; break;
+                           case ". _ . . _ ."   : text = text + "\""; break;
+                           case "_ . _ . _ ."   : text = text + ";"; break;
+                           case "_ _ _ . . ."   : text = text + ":"; break;
+                           case ". . . _ ."     : text = text + "§"; break;
+                           case ". . _ . _"     : text = text + "¿"; break;
+                           case "_ . _ . _"     : text = text + "~"; break;
+                           case ". _ _ _ _ ."   : text = text + "\'"; break;
+                           case ". _ . . _"     : text = text + "#"; break;
+                           case ". _ . . ."     : text = text + "&"; break;
+                           case ". . . _ . . _" : text = text + "$"; break;
+                           case ". .   . ."     : text = text + "*"; break;
+
+                }
+            }
+            text = text + " ";
+        }
+        return text.trim();
     }
 
 }
