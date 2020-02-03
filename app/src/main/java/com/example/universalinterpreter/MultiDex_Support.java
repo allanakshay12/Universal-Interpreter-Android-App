@@ -15,7 +15,7 @@ public class MultiDex_Support extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        FirebaseDatabase.getInstance().setPersistenceEnabled(true);
+        FirebaseDatabase.getInstance().setPersistenceEnabled(false);
     }
 
     protected void attachBaseContext(Context base) {

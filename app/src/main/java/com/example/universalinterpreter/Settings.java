@@ -101,6 +101,7 @@ public class Settings extends AppCompatActivity {
 
         if(preference.contains("Email")) {
             email.setText(preference.getString("Email", ""));
+            email.setKeyListener(null);
         }
 
         if(preference.contains("Name")) {
@@ -145,6 +146,23 @@ public class Settings extends AppCompatActivity {
                     editor.putString("Name", name.getText().toString().trim());
                     databaseReference = FirebaseDatabase.getInstance().getReference().child("Users");
                     databaseReference.child(email.getText().toString().trim().replace(".", "+")).child("Name").setValue(name.getText().toString().trim());
+                    databaseReference.child(email.getText().toString().trim().replace(".", "+")).child("Chats").child("Key Values").addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            if(dataSnapshot.getValue() != null) {
+                                //Toast.makeText(Settings.this, dataSnapshot.getValue().toString(), Toast.LENGTH_SHORT).show();
+                            } else {
+                                databaseReference.child(email.getText().toString().trim().replace(".", "+")).child("Chats").child("Key Values").child("New").setValue(0);
+                                databaseReference.child(email.getText().toString().trim().replace(".", "+")).child("Chats").child("Key Values").child("Read").setValue(0);
+                                databaseReference.child(email.getText().toString().trim().replace(".", "+")).child("Chats").child("Key Values").child("Sent").setValue(0);
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                        }
+                    });
                     editor.apply();
                     finish();
                 }

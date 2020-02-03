@@ -23,5 +23,81 @@
     <include layout="@layout/content_chat" />
 
 
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="55dp">
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:padding="10dp"
+            android:layout_marginBottom="10dp"
+            android:id="@+id/Chat_Input_Text"
+            android:hint="Enter the text here"
+            android:textSize="30dp"/>
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_above="@id/Chat_Input_Text"
+            android:layout_margin="10dp"
+            android:padding="10dp"
+            android:background="@android:color/white">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:textColor="@android:color/black"
+                android:textSize="50dp"
+                android:layout_centerInParent="true"
+                android:textAlignment="center"
+                android:text="Start a Conversation"
+                android:scrollbars="vertical"
+                android:id="@+id/Chat_Output_Text"/>
+
+            </RelativeLayout>
+
+        </androidx.cardview.widget.CardView>
+
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:id="@+id/Chat_Center"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_alignParentBottom="false"
+            android:layout_below="@id/Chat_Center"
+            android:layout_above="@id/Chat_Input_Text"
+            android:id="@+id/Chat_Bottom_Area"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_toRightOf="@id/Chat_Center"
+            android:id="@+id/Chat_Right_Area"
+            android:layout_above="@id/Chat_Bottom_Area"/>
+
+        <TextView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_toLeftOf="@id/Chat_Center"
+        android:id="@+id/Chat_Left_Area"
+            android:layout_above="@id/Chat_Bottom_Area"/>
+
+    </RelativeLayout>
+
+
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

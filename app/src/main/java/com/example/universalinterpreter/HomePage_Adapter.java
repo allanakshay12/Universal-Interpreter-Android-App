@@ -90,7 +90,17 @@ public class HomePage_Adapter extends RecyclerView.Adapter<HomePage_Adapter.MyVi
 
         holder.name.setText(listitem.getName());
 
+        if(listitem.getType()==1) {
+            holder.card.setCardBackgroundColor(Color.parseColor("#1565C0"));
+            holder.name.setTextColor(Color.parseColor("White"));
 
+
+        }
+        else {
+            holder.card.setCardBackgroundColor(Color.parseColor("White"));
+            holder.name.setTextColor(Color.parseColor("Black"));
+
+        }
 
     }
 

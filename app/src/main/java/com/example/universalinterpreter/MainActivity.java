@@ -5,6 +5,7 @@ import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.Bundle;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
@@ -46,7 +47,7 @@ public class MainActivity extends AppCompatActivity {
     RecyclerView recyclerView;
     List<Homepage_ListItem> list = new ArrayList<>();
     HomePage_Adapter adapter;
-    DatabaseReference databaseReference;
+    DatabaseReference databaseReferencenew, databaseReferenceread, databaseReference;
     Activity activity;
     int RC_SIGN_IN = 1;
     GoogleSignInClient mGoogleSignInClient;
@@ -65,7 +66,8 @@ public class MainActivity extends AppCompatActivity {
         activity = this;
         context = this;
 
-        cardView = findViewById(R.id.listitem_card);
+        cardView = findViewById(R.id.main_page_contact_card);
+
 
 
 
@@ -98,6 +100,9 @@ public class MainActivity extends AppCompatActivity {
 
        // String android_id = android.provider.Settings.Secure.getString(this.getContentResolver(), android.provider.Settings.Secure.ANDROID_ID);
         databaseReference = FirebaseDatabase.getInstance().getReference().child("Users").child(email.replace(".", "+")).child("Chats");
+        databaseReferencenew = FirebaseDatabase.getInstance().getReference().child("Users").child(email.replace(".", "+")).child("Chats").child("New");
+        databaseReferenceread = FirebaseDatabase.getInstance().getReference().child("Users").child(email.replace(".", "+")).child("Chats").child("Read");
+
 
         //Following Lines used to populate the recycler list
         //recyclerView = findViewById(R.id.homepage_recyclerview);
@@ -113,21 +118,47 @@ public class MainActivity extends AppCompatActivity {
         rightarea.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                count = (count + 1)%list.size();
-                contactname.setText(list.get(count).getName());
-                fundamental_converter = new Fundamental_Converter(list.get(count).getName(), preference.getString("output", "Text"), context);
+                try {
+                    count = (count + 1) % list.size();
+                    contactname.setText(list.get(count).getName());
+                    if (list.get(count).getType() == 1) {
+                        cardView.setCardBackgroundColor(Color.parseColor("White"));
+                        contactname.setTextColor(Color.parseColor("Black"));
+                    } else {
+                        cardView.setCardBackgroundColor(Color.parseColor("Black"));
+                        contactname.setTextColor(Color.parseColor("White"));
+                    }
+                    if(list.get(count).getType()==1) {
+                        fundamental_converter = new Fundamental_Converter("New Message from " + list.get(count).getName(), preference.getString("output", "Text"), context);
+                    } else {
+                        fundamental_converter = new Fundamental_Converter(list.get(count).getName(), preference.getString("output", "Text"), context);
+                    }
+                } catch (Exception e) {}
             }
         });
 
         leftarea.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                count = (count-1);
-                if(count==-1) {
-                    count = list.size()-1;
-                }
-                contactname.setText(list.get(count).getName());
-                fundamental_converter = new Fundamental_Converter(list.get(count).getName(), preference.getString("output", "Text"), context);
+                try {
+                    count = (count - 1);
+                    if (count == -1) {
+                        count = list.size() - 1;
+                    }
+                    contactname.setText(list.get(count).getName());
+                    if (list.get(count).getType() == 1) {
+                        cardView.setCardBackgroundColor(Color.parseColor("White"));
+                        contactname.setTextColor(Color.parseColor("Black"));
+                    } else {
+                        cardView.setCardBackgroundColor(Color.parseColor("Black"));
+                        contactname.setTextColor(Color.parseColor("White"));
+                    }
+                    if(list.get(count).getType()==1) {
+                        fundamental_converter = new Fundamental_Converter("New Message from " + list.get(count).getName(), preference.getString("output", "Text"), context);
+                    } else {
+                        fundamental_converter = new Fundamental_Converter(list.get(count).getName(), preference.getString("output", "Text"), context);
+                    }
+                } catch (Exception e) {}
             }
         });
 
@@ -137,7 +168,7 @@ public class MainActivity extends AppCompatActivity {
                 Intent intent_chat = new Intent(getApplicationContext(), Chat.class);
                 intent_chat.putExtra("Client Email", list.get(count).getEmail());
                 intent_chat.putExtra("Client Name", list.get(count).getName());
-                intent_chat.putExtra("New_Chat", "false");
+                intent_chat.putExtra("New_Chat", false);
                 startActivity(intent_chat);
                 return true;
             }
@@ -148,7 +179,7 @@ public class MainActivity extends AppCompatActivity {
             public boolean onLongClick(View view) {
                 Intent intent_new_chat = new Intent(getApplicationContext(), Chat.class);
                 intent_new_chat.putExtra("Client Email", "");
-                intent_new_chat.putExtra("New_Chat", "true");
+                intent_new_chat.putExtra("New_Chat", true);
                 intent_new_chat.putExtra("Client Name", "");
                 startActivity(intent_new_chat);
                 return true;
@@ -211,26 +242,85 @@ public class MainActivity extends AppCompatActivity {
 
     //Function to populate the list
     void prepareHomePageData() {
-        databaseReference.addValueEventListener(new ValueEventListener() {
+        databaseReferencenew.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-               //try {
-                    list.clear();
-                    for (DataSnapshot childsnapshot : dataSnapshot.getChildren()) {
+               try {
+                   list.clear();
+                   for (DataSnapshot childsnapshot : dataSnapshot.getChildren()) {
                        // Toast.makeText(activity, childsnapshot.getValue().toString(), Toast.LENGTH_SHORT).show();
 
-                            Homepage_ListItem item = new Homepage_ListItem(childsnapshot.child("Name").getValue().toString(), childsnapshot.child("Email").getValue().toString());
-                            list.add(item);
+                       Homepage_ListItem item = new Homepage_ListItem(childsnapshot.child("Name").getValue().toString(), childsnapshot.child("Email").getValue().toString(), 1);
+                       list.add(item);
 
-                    }
-                   contactname.setText(list.get(count).getName());
-                fundamental_converter = new Fundamental_Converter(list.get(count).getName(), preference.getString("output", "Text"), context);
-                    //adapter.notifyDataSetChanged();
-                    //load_animation.smoothToHide();
-              //} catch (Exception e) {
-                    //Toast.makeText(MainActivity.this, "Error in fetching details", Toast.LENGTH_SHORT).show();
-                  //  list.clear();
-                    databaseReference.removeEventListener(this);
+                   }
+
+                   try {
+                       contactname.setText(list.get(count).getName());
+                       if (list.get(count).getType() == 1) {
+                           cardView.setCardBackgroundColor(Color.parseColor("White"));
+                           contactname.setTextColor(Color.parseColor("Black"));
+                       } else {
+                           cardView.setCardBackgroundColor(Color.parseColor("Black"));
+                           contactname.setTextColor(Color.parseColor("White"));
+                       }
+                       //fundamental_converter = new Fundamental_Converter(list.get(count).getName(), preference.getString("output", "Text"), context);
+                   } catch (IndexOutOfBoundsException e) {
+
+                   }
+                   //adapter.notifyDataSetChanged();
+                   //load_animation.smoothToHide();
+                   //} catch (Exception e) {
+                   //Toast.makeText(MainActivity.this, "Error in fetching details", Toast.LENGTH_SHORT).show();
+                   //  list.clear();
+
+                   databaseReferenceread.addValueEventListener(new ValueEventListener() {
+                       @Override
+                       public void onDataChange(DataSnapshot dataSnapshot) {
+                           //try {
+                           for (DataSnapshot childsnapshot : dataSnapshot.getChildren()) {
+                               //  Toast.makeText(activity, childsnapshot.getValue().toString(), Toast.LENGTH_SHORT).show();
+
+                               Homepage_ListItem item = new Homepage_ListItem(childsnapshot.child("Name").getValue().toString(), childsnapshot.child("Email").getValue().toString(), 0);
+                               list.add(item);
+
+                           }
+
+
+                           try {
+                               contactname.setText(list.get(count).getName());
+                               if (list.get(count).getType() == 1) {
+                                   cardView.setCardBackgroundColor(Color.parseColor("White"));
+                                   contactname.setTextColor(Color.parseColor("Black"));
+                               } else {
+                                   cardView.setCardBackgroundColor(Color.parseColor("Black"));
+                                   contactname.setTextColor(Color.parseColor("White"));
+                               }
+                               if (list.get(count).getType() == 1) {
+                                   fundamental_converter = new Fundamental_Converter("New Message from " + list.get(count).getName(), preference.getString("output", "Text"), context);
+                               } else {
+                                   fundamental_converter = new Fundamental_Converter(list.get(count).getName(), preference.getString("output", "Text"), context);
+                               }
+                           } catch (IndexOutOfBoundsException e) {
+
+                           }
+                           //adapter.notifyDataSetChanged();
+                           //load_animation.smoothToHide();
+                           //} catch (Exception e) {
+                           //Toast.makeText(MainActivity.this, "Error in fetching details", Toast.LENGTH_SHORT).show();
+                           //  list.clear();
+
+                           databaseReferenceread.removeEventListener(this);
+                           // }
+                       }
+
+                       @Override
+                       public void onCancelled(DatabaseError databaseError) {
+
+                       }
+                   });
+                   //databaseReferencenew.removeEventListener(this);
+               } catch (Exception e) {}
                // }
            }
 
