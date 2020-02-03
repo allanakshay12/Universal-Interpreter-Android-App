@@ -191,7 +191,7 @@ public class Chat extends AppCompatActivity {
                                 dbref.child(preference.getString("Email", "").replace(".", "+")).child("Chats").child("Key Values").child("Read").setValue(String.valueOf(read_key));
                                 dbref.child(preference.getString("Email", "").replace(".", "+")).child("Chats").child("Sent").child(String.valueOf(sent_key)).child("Name").setValue(getIntent().getStringExtra("Client Name"));
                                 dbref.child(preference.getString("Email", "").replace(".", "+")).child("Chats").child("Sent").child(String.valueOf(sent_key)).child("Email").setValue(getIntent().getStringExtra("Client Email"));
-                                dbref.child(preference.getString("Email", "").replace(".", "+")).child("Chats").child("Sent").child(String.valueOf(sent_key)).child("Message").setValue(outputText.getText().toString());
+                                dbref.child(preference.getString("Email", "").replace(".", "+")).child("Chats").child("Sent").child(String.valueOf(sent_key)).child("Message").setValue(message);
                                 dbref.child(preference.getString("Email", "").replace(".", "+")).child("Chats").child("Key Values").child("Sent").setValue(String.valueOf(sent_key));
                                 finish();
                             }
