@@ -165,11 +165,14 @@ public class MainActivity extends AppCompatActivity {
         rightarea.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View view) {
-                Intent intent_chat = new Intent(getApplicationContext(), Chat.class);
-                intent_chat.putExtra("Client Email", list.get(count).getEmail());
-                intent_chat.putExtra("Client Name", list.get(count).getName());
-                intent_chat.putExtra("New_Chat", false);
-                startActivity(intent_chat);
+                try {
+                    Intent intent_chat = new Intent(getApplicationContext(), Chat.class);
+                    intent_chat.putExtra("Client Email", list.get(count).getEmail());
+                    intent_chat.putExtra("Client Name", list.get(count).getName());
+                    intent_chat.putExtra("New_Chat", false);
+                    startActivity(intent_chat);
+                    return true;
+                } catch (Exception e) { }
                 return true;
             }
         });
