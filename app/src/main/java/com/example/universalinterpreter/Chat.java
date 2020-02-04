@@ -61,7 +61,6 @@ public class Chat extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        v = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
 
         client_email = getIntent().getStringExtra("Client Email").replace(".", "+");
 
@@ -73,6 +72,9 @@ public class Chat extends AppCompatActivity {
 
         activity = this;
         context = this;
+
+        v = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
+
 
         dbref = FirebaseDatabase.getInstance().getReference().child("Users");
 
