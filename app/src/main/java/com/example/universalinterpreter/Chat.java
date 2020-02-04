@@ -28,6 +28,7 @@ import android.speech.RecognizerIntent;
 import android.speech.tts.TextToSpeech;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -54,6 +55,8 @@ public class Chat extends AppCompatActivity {
     private final int REQ_CODE_SPEECH_INPUT = 100;
     String email, message;
     Vibrator v;
+    RelativeLayout relativeLayout;
+    Bundle savedInstanceState;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,7 +65,7 @@ public class Chat extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-
+        this.savedInstanceState = savedInstanceState;
         client_email = getIntent().getStringExtra("Client Email").replace(".", "+");
 
         inputText = findViewById(R.id.Chat_Input_Text);
@@ -70,6 +73,8 @@ public class Chat extends AppCompatActivity {
         rightarea = findViewById(R.id.Chat_Right_Area);
         centerarea = findViewById(R.id.Chat_Bottom_Area);
         outputText = findViewById(R.id.Chat_Output_Text);
+
+        relativeLayout = findViewById(R.id.Camera_Container);
 
         activity = this;
         context = this;
@@ -198,7 +203,7 @@ public class Chat extends AppCompatActivity {
             }
 
             if(input_mode.equals("Speech")) {
-
+                inputText.setKeyListener(null);
                 leftarea.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
@@ -222,6 +227,30 @@ public class Chat extends AppCompatActivity {
                     }
                 });
 
+            }
+
+            if(input_mode.equals("ASL")) {
+                inputText.setKeyListener(null);
+                leftarea.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        try {
+                            inputText.setText(inputText.getText().toString().substring(0, inputText.getText().toString().length() - 1));
+                        } catch (Exception e) {}
+                    }
+                });
+                rightarea.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        startCameraActivity();
+                    }
+                });
+                centerarea.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        startCameraActivity();
+                    }
+                });
             }
 
 
@@ -433,6 +462,35 @@ public class Chat extends AppCompatActivity {
 
             }
 
+
+            if(input_mode.equals("ASL")) {
+                inputText.setKeyListener(null);
+                leftarea.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        try {
+                            inputText.setText(inputText.getText().toString().substring(0, inputText.getText().toString().length() - 1));
+                        } catch (Exception e) {}
+                    }
+                });
+                rightarea.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        startCameraActivity();
+                        outputText.setVisibility(View.INVISIBLE);
+                    }
+                });
+                centerarea.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        startCameraActivity();
+                        outputText.setVisibility(View.INVISIBLE);
+                    }
+                });
+            }
+
+
+
         }
 
 
@@ -563,6 +621,26 @@ public class Chat extends AppCompatActivity {
             text = text + " ";
         }
         return text.trim();
+    }
+
+    private void startCameraActivity() {
+        relativeLayout.setVisibility(View.VISIBLE);
+        final Camera2BasicFragment c2f = Camera2BasicFragment.newInstance();
+        relativeLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                relativeLayout.setVisibility(View.GONE);
+                outputText.setVisibility(View.VISIBLE);
+                View_Holder_Chat_Input.setChat_view(null);
+            }
+        });
+        if (null == savedInstanceState) {
+            View_Holder_Chat_Input.setChat_view(getWindow().getDecorView().getRootView());
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.container, c2f)
+                    .commit();
+        }
     }
 
 }
