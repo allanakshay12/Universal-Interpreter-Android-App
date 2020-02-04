@@ -47,22 +47,6 @@ public class Fundamental_Converter {
             if (input == '_') {
                 // Vibrate for 2000 milliseconds
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                    v.vibrate(VibrationEffect.createOneShot(2000, VibrationEffect.DEFAULT_AMPLITUDE));
-                } else {
-                    //deprecated in API 26
-                    v.vibrate(2000);
-                }
-                final Handler handler = new Handler();
-                handler.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        // Do something after 5s = 5000ms
-                        Morse_Converter(output.charAt(++count));
-                    }
-                }, 2000);
-            } else if (input == '.') {
-                // Vibrate for 1000 milliseconds
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                     v.vibrate(VibrationEffect.createOneShot(1000, VibrationEffect.DEFAULT_AMPLITUDE));
                 } else {
                     //deprecated in API 26
@@ -76,6 +60,22 @@ public class Fundamental_Converter {
                         Morse_Converter(output.charAt(++count));
                     }
                 }, 1000);
+            } else if (input == '.') {
+                // Vibrate for 1000 milliseconds
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    v.vibrate(VibrationEffect.createOneShot(500, VibrationEffect.DEFAULT_AMPLITUDE));
+                } else {
+                    //deprecated in API 26
+                    v.vibrate(500);
+                }
+                final Handler handler = new Handler();
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        // Do something after 5s = 5000ms
+                        Morse_Converter(output.charAt(++count));
+                    }
+                }, 500);
             }
             if (input == ' ') {
                 final Handler handler = new Handler();
@@ -85,7 +85,7 @@ public class Fundamental_Converter {
                         // Do something after 5s = 5000ms
                         Morse_Converter(output.charAt(++count));
                     }
-                }, 1000);
+                }, 500);
             }
 
         } catch (StringIndexOutOfBoundsException e) {

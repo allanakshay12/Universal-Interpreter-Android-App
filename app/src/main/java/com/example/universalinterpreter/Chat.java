@@ -21,6 +21,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+import android.os.Handler;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
 import android.speech.RecognizerIntent;
@@ -149,10 +150,10 @@ public class Chat extends AppCompatActivity {
                         inputText.setText(morse_input);
                         // Vibrate for 1000 milliseconds
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                            v.vibrate(VibrationEffect.createOneShot(1000, VibrationEffect.DEFAULT_AMPLITUDE));
+                            v.vibrate(VibrationEffect.createOneShot(500, VibrationEffect.DEFAULT_AMPLITUDE));
                         } else {
                             //deprecated in API 26
-                            v.vibrate(1000);
+                            v.vibrate(500);
                         }
                     }
                 });
@@ -161,13 +162,21 @@ public class Chat extends AppCompatActivity {
                     public boolean onLongClick(View view) {
                         morse_input = morse_input + "_";
                         inputText.setText(morse_input);
-                        // Vibrate for 2000 milliseconds
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                            v.vibrate(VibrationEffect.createOneShot(2000, VibrationEffect.DEFAULT_AMPLITUDE));
-                        } else {
-                            //deprecated in API 26
-                            v.vibrate(2000);
-                        }
+
+                        final Handler handler = new Handler();
+                        handler.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                // Do something after 5s = 5000ms
+                                // Vibrate for 2000 milliseconds
+                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                                    v.vibrate(VibrationEffect.createOneShot(1000, VibrationEffect.DEFAULT_AMPLITUDE));
+                                } else {
+                                    //deprecated in API 26
+                                    v.vibrate(1000);
+                                }
+                            }
+                        }, 1);
                         return true;
                     }
                 });
@@ -348,10 +357,10 @@ public class Chat extends AppCompatActivity {
                         inputText.setText(morse_input);
                         // Vibrate for 1000 milliseconds
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                            v.vibrate(VibrationEffect.createOneShot(1000, VibrationEffect.DEFAULT_AMPLITUDE));
+                            v.vibrate(VibrationEffect.createOneShot(500, VibrationEffect.DEFAULT_AMPLITUDE));
                         } else {
                             //deprecated in API 26
-                            v.vibrate(1000);
+                            v.vibrate(500);
                         }
                     }
                 });
@@ -360,13 +369,20 @@ public class Chat extends AppCompatActivity {
                     public boolean onLongClick(View view) {
                         morse_input = morse_input + "_";
                         inputText.setText(morse_input);
-                        // Vibrate for 2000 milliseconds
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                            v.vibrate(VibrationEffect.createOneShot(2000, VibrationEffect.DEFAULT_AMPLITUDE));
-                        } else {
-                            //deprecated in API 26
-                            v.vibrate(2000);
-                        }
+                        final Handler handler = new Handler();
+                        handler.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                // Do something after 5s = 5000ms
+                                // Vibrate for 2000 milliseconds
+                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                                    v.vibrate(VibrationEffect.createOneShot(1000, VibrationEffect.DEFAULT_AMPLITUDE));
+                                } else {
+                                    //deprecated in API 26
+                                    v.vibrate(1000);
+                                }
+                            }
+                        }, 1);
                         return true;
                     }
                 });
@@ -540,6 +556,7 @@ public class Chat extends AppCompatActivity {
                            case ". _ . . ."     : text = text + "&"; break;
                            case ". . . _ . . _" : text = text + "$"; break;
                            case ". .   . ."     : text = text + "*"; break;
+                           default: text = text + ""; break;
 
                 }
             }
