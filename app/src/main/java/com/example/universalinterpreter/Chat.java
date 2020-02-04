@@ -243,12 +243,14 @@ public class Chat extends AppCompatActivity {
                     @Override
                     public void onClick(View view) {
                         startCameraActivity();
+                        outputText.setVisibility(View.INVISIBLE);
                     }
                 });
                 centerarea.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
                         startCameraActivity();
+                        outputText.setVisibility(View.INVISIBLE);
                     }
                 });
             }
