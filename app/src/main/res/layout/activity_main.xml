@@ -94,8 +94,8 @@
                     android:layout_centerVertical="true"
                     android:layout_marginLeft="10sp"
                     android:layout_toRightOf="@id/listitem_logo"
-
-                    android:textColor="@android:color/white"
+                    android:text="Such Empty, Much Wow"
+                    android:textColor="@android:color/black"
                     android:textSize="70sp"
                     android:textStyle="bold"
                     android:layout_centerInParent="true"
