@@ -56,8 +56,10 @@ public class Fundamental_Converter {
                 handler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        // Do something after 5s = 5000ms
-                        Morse_Converter(output.charAt(++count));
+                        try {
+                            // Do something after 5s = 5000ms
+                            Morse_Converter(output.charAt(++count));
+                        } catch (Exception e) {}
                     }
                 }, 1000);
             } else if (input == '.') {
@@ -72,18 +74,22 @@ public class Fundamental_Converter {
                 handler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        // Do something after 5s = 5000ms
-                        Morse_Converter(output.charAt(++count));
+                        try {
+                            // Do something after 5s = 5000ms
+                            Morse_Converter(output.charAt(++count));
+                        } catch (Exception e) {}
                     }
                 }, 500);
             }
-            if (input == ' ') {
+            else if (input == ' ') {
                 final Handler handler = new Handler();
                 handler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        // Do something after 5s = 5000ms
-                        Morse_Converter(output.charAt(++count));
+                        try {
+                            // Do something after 5s = 5000ms
+                            Morse_Converter(output.charAt(++count));
+                        } catch (Exception e) {}
                     }
                 }, 500);
             }
