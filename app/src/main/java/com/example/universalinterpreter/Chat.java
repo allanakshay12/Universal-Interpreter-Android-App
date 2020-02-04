@@ -61,6 +61,8 @@ public class Chat extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        v = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
+
         client_email = getIntent().getStringExtra("Client Email").replace(".", "+");
 
         inputText = findViewById(R.id.Chat_Input_Text);
