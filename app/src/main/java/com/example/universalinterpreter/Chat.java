@@ -5,6 +5,7 @@ import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Bundle;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -20,6 +21,8 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+import android.os.VibrationEffect;
+import android.os.Vibrator;
 import android.speech.RecognizerIntent;
 import android.speech.tts.TextToSpeech;
 import android.view.View;
@@ -49,7 +52,7 @@ public class Chat extends AppCompatActivity {
     String morse_input;
     private final int REQ_CODE_SPEECH_INPUT = 100;
     String email, message;
-
+    Vibrator v;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -140,6 +143,13 @@ public class Chat extends AppCompatActivity {
                     public void onClick(View view) {
                         morse_input = morse_input + ".";
                         inputText.setText(morse_input);
+                        // Vibrate for 1000 milliseconds
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                            v.vibrate(VibrationEffect.createOneShot(1000, VibrationEffect.DEFAULT_AMPLITUDE));
+                        } else {
+                            //deprecated in API 26
+                            v.vibrate(1000);
+                        }
                     }
                 });
                 rightarea.setOnLongClickListener(new View.OnLongClickListener() {
@@ -147,6 +157,13 @@ public class Chat extends AppCompatActivity {
                     public boolean onLongClick(View view) {
                         morse_input = morse_input + "_";
                         inputText.setText(morse_input);
+                        // Vibrate for 2000 milliseconds
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                            v.vibrate(VibrationEffect.createOneShot(2000, VibrationEffect.DEFAULT_AMPLITUDE));
+                        } else {
+                            //deprecated in API 26
+                            v.vibrate(2000);
+                        }
                         return true;
                     }
                 });
@@ -175,7 +192,7 @@ public class Chat extends AppCompatActivity {
                         try {
                             inputText.setText(inputText.getText().toString().substring(0, inputText.getText().toString().length() - 1));
                         } catch (Exception e) {
-                            
+
                         }
                     }
                 });
@@ -325,6 +342,13 @@ public class Chat extends AppCompatActivity {
                     public void onClick(View view) {
                         morse_input = morse_input + ".";
                         inputText.setText(morse_input);
+                        // Vibrate for 1000 milliseconds
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                            v.vibrate(VibrationEffect.createOneShot(1000, VibrationEffect.DEFAULT_AMPLITUDE));
+                        } else {
+                            //deprecated in API 26
+                            v.vibrate(1000);
+                        }
                     }
                 });
                 rightarea.setOnLongClickListener(new View.OnLongClickListener() {
@@ -332,6 +356,13 @@ public class Chat extends AppCompatActivity {
                     public boolean onLongClick(View view) {
                         morse_input = morse_input + "_";
                         inputText.setText(morse_input);
+                        // Vibrate for 2000 milliseconds
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                            v.vibrate(VibrationEffect.createOneShot(2000, VibrationEffect.DEFAULT_AMPLITUDE));
+                        } else {
+                            //deprecated in API 26
+                            v.vibrate(2000);
+                        }
                         return true;
                     }
                 });
