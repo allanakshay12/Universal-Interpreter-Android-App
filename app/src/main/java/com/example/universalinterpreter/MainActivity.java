@@ -56,6 +56,7 @@ public class MainActivity extends AppCompatActivity {
     Context context;
     Fundamental_Converter fundamental_converter;
     CardView cardView;
+    ArrayList<String> dup_emails = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -250,12 +251,17 @@ public class MainActivity extends AppCompatActivity {
             public void onDataChange(DataSnapshot dataSnapshot) {
                try {
                    list.clear();
+                   dup_emails.clear();
                    for (DataSnapshot childsnapshot : dataSnapshot.getChildren()) {
                        // Toast.makeText(activity, childsnapshot.getValue().toString(), Toast.LENGTH_SHORT).show();
 
                        Homepage_ListItem item = new Homepage_ListItem(childsnapshot.child("Name").getValue().toString(), childsnapshot.child("Email").getValue().toString(), 1);
-                       list.add(item);
-
+                       if(dup_emails.contains(childsnapshot.child("Email").getValue().toString())) {
+                           databaseReferencenew.child(childsnapshot.getKey()).removeValue();
+                       } else {
+                           dup_emails.add(childsnapshot.child("Email").getValue().toString());
+                           list.add(item);
+                       }
                    }
 
                    try {
@@ -285,7 +291,13 @@ public class MainActivity extends AppCompatActivity {
                                //  Toast.makeText(activity, childsnapshot.getValue().toString(), Toast.LENGTH_SHORT).show();
 
                                Homepage_ListItem item = new Homepage_ListItem(childsnapshot.child("Name").getValue().toString(), childsnapshot.child("Email").getValue().toString(), 0);
-                               list.add(item);
+
+                               if(dup_emails.contains(childsnapshot.child("Email").getValue().toString())) {
+                                   databaseReferenceread.child(childsnapshot.getKey()).removeValue();
+                               } else {
+                                   dup_emails.add(childsnapshot.child("Email").getValue().toString());
+                                   list.add(item);
+                               }
 
                            }
 
@@ -333,4 +345,5 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
+
 }

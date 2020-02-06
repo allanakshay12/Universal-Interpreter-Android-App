@@ -18,12 +18,24 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import android.provider.ContactsContract;
+import android.util.Base64;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Toast;
+
+import java.security.InvalidAlgorithmParameterException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+
+import javax.crypto.BadPaddingException;
+import javax.crypto.Cipher;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
+import javax.crypto.spec.IvParameterSpec;
+import javax.crypto.spec.SecretKeySpec;
 
 public class Settings extends AppCompatActivity {
 
@@ -35,8 +47,12 @@ public class Settings extends AppCompatActivity {
     private Button button;
     private RadioGroup input_rg, output_rg;
     private RadioButton input_asl, input_speech, input_morse, input_text, output_text, output_morse, output_speech;
-    private EditText email, name;
+    private EditText email, name, password;
     DatabaseReference databaseReference;
+    private static final String ALGORITHM = "Blowfish";
+    private static final String MODE = "Blowfish/CBC/PKCS5Padding";
+    private static final String IV = "abcdefgh";
+    private static String KEY;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,6 +75,7 @@ public class Settings extends AppCompatActivity {
         button = findViewById(R.id.Save_Preferences_Button);
         email = findViewById(R.id.Email);
         name = findViewById(R.id.Name);
+        password = findViewById(R.id.Password);
 
         input_text.toggle();
         output_text.toggle();
@@ -101,11 +118,17 @@ public class Settings extends AppCompatActivity {
 
         if(preference.contains("Email")) {
             email.setText(preference.getString("Email", ""));
+            KEY = preference.getString("Email", "");
             email.setKeyListener(null);
         }
 
         if(preference.contains("Name")) {
             name.setText(preference.getString("Name", ""));
+        }
+
+        if(preference.contains("Password")) {
+            password.setText(preference.getString("Password", ""));
+            password.setKeyListener(null);
         }
 
         button.setOnClickListener(new View.OnClickListener() {
@@ -139,22 +162,57 @@ public class Settings extends AppCompatActivity {
                 }
 
                 editor.putBoolean(pref_option, true);
-                if(email.getText().toString().trim().equals("") || name.getText().toString().trim().equals("")){
-                    Toast.makeText(Settings.this, "Enter a valid email id / name", Toast.LENGTH_SHORT).show();
+
+
+
+                if(email.getText().toString().trim().equals("") || name.getText().toString().trim().equals("") || password.getText().toString().equals("")){
+                    Toast.makeText(Settings.this, "Enter a valid email id / password / name", Toast.LENGTH_SHORT).show();
                 } else {
-                    editor.putString("Email", email.getText().toString().trim());
-                    editor.putString("Name", name.getText().toString().trim());
+                    KEY = email.getText().toString();
+                    ///////////////////////-___-/////////////////////////
+
+
                     databaseReference = FirebaseDatabase.getInstance().getReference().child("Users");
-                    databaseReference.child(email.getText().toString().trim().replace(".", "+")).child("Name").setValue(name.getText().toString().trim());
-                    databaseReference.child(email.getText().toString().trim().replace(".", "+")).child("Chats").child("Key Values").addListenerForSingleValueEvent(new ValueEventListener() {
+                    databaseReference.child(email.getText().toString().trim().replace(".", "+")).addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                            if(dataSnapshot.getValue() != null) {
-                                //Toast.makeText(Settings.this, dataSnapshot.getValue().toString(), Toast.LENGTH_SHORT).show();
+                            if(dataSnapshot.getValue()==null) {
+                                editor.putString("Email", email.getText().toString().trim());
+                                editor.putString("Name", name.getText().toString().trim());
+                                editor.putString("Password", password.getText().toString());
+                                databaseReference.child(email.getText().toString().trim().replace(".", "+")).child("Name").setValue(name.getText().toString().trim());
+                                databaseReference.child(email.getText().toString().trim().replace(".", "+")).child("Password").setValue(password.getText().toString().trim());
+                                databaseReference.child(email.getText().toString().trim().replace(".", "+")).child("Chats").child("Key Values").addListenerForSingleValueEvent(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                        if(dataSnapshot.getValue() != null) {
+                                            //Toast.makeText(Settings.this, dataSnapshot.getValue().toString(), Toast.LENGTH_SHORT).show();
+                                        } else {
+                                            databaseReference.child(email.getText().toString().trim().replace(".", "+")).child("Chats").child("Key Values").child("New").setValue(0);
+                                            databaseReference.child(email.getText().toString().trim().replace(".", "+")).child("Chats").child("Key Values").child("Read").setValue(0);
+                                            databaseReference.child(email.getText().toString().trim().replace(".", "+")).child("Chats").child("Key Values").child("Sent").setValue(0);
+                                        }
+                                    }
+
+                                    @Override
+                                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                    }
+                                });
+                                editor.apply();
+                                finish();
                             } else {
-                                databaseReference.child(email.getText().toString().trim().replace(".", "+")).child("Chats").child("Key Values").child("New").setValue(0);
-                                databaseReference.child(email.getText().toString().trim().replace(".", "+")).child("Chats").child("Key Values").child("Read").setValue(0);
-                                databaseReference.child(email.getText().toString().trim().replace(".", "+")).child("Chats").child("Key Values").child("Sent").setValue(0);
+                                if(!dataSnapshot.child("Password").getValue().toString().equals(password.getText().toString())) {
+                                    Toast.makeText(Settings.this, "Account already exists / Wrong password. Please try again.", Toast.LENGTH_SHORT).show();
+                                } else {
+                                    editor.putString("Email", email.getText().toString().trim());
+                                    editor.putString("Name", name.getText().toString().trim());
+                                    editor.putString("Password", password.getText().toString());
+                                    editor.apply();
+                                    databaseReference.child(email.getText().toString().trim().replace(".", "+")).child("Name").setValue(name.getText().toString().trim());
+                                   // databaseReference.child(email.getText().toString().trim().replace(".", "+")).child("Password").setValue(password.getText().toString().trim());
+                                    finish();
+                                }
                             }
                         }
 
@@ -163,13 +221,32 @@ public class Settings extends AppCompatActivity {
 
                         }
                     });
-                    editor.apply();
-                    finish();
+
+
+
+
                 }
 
             }
         });
 
     }
+
+   /* public static  String encrypt(String value ) throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidAlgorithmParameterException, InvalidKeyException, BadPaddingException, IllegalBlockSizeException {
+        SecretKeySpec secretKeySpec = new SecretKeySpec(KEY.getBytes(), ALGORITHM);
+        Cipher cipher = Cipher.getInstance(MODE);
+        cipher.init(Cipher.ENCRYPT_MODE, secretKeySpec, new IvParameterSpec(IV.getBytes()));
+        byte[] values = cipher.doFinal(value.getBytes());
+        return Base64.encodeToString(values, Base64.DEFAULT);
+    }
+
+    public static  String decrypt(String value) throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidAlgorithmParameterException, InvalidKeyException, BadPaddingException, IllegalBlockSizeException {
+        byte[] values = Base64.decode(value, Base64.DEFAULT);
+        SecretKeySpec secretKeySpec = new SecretKeySpec(KEY.getBytes(), ALGORITHM);
+        Cipher cipher = Cipher.getInstance(MODE);
+        cipher.init(Cipher.DECRYPT_MODE, secretKeySpec, new IvParameterSpec(IV.getBytes()));
+        return new String(cipher.doFinal(values));
+    }
+*/
 
 }
