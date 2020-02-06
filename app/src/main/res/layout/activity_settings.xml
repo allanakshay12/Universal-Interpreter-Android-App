@@ -174,7 +174,8 @@
                 android:textColor="@android:color/white"
                 android:layout_centerHorizontal="true"
                 android:layout_marginTop="20dp"
-                android:id="@+id/Save_Preferences_Button"/>
+                android:id="@+id/Save_Preferences_Button"
+                android:layout_marginBottom="30dp"/>
 
 
         </RelativeLayout>
