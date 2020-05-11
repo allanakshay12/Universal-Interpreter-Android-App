@@ -109,7 +109,7 @@ public class HomePage_Adapter extends RecyclerView.Adapter<HomePage_Adapter.MyVi
         return homepagelist.size();
     }
 
-    public void downloadDirect(StorageReference imageRef, ImageView imageView, int type) {
+    /*public void downloadDirect(StorageReference imageRef, ImageView imageView, int type) {
         //type : 0-Image, 1-Logo
         try {
                 // Download directly from StorageReference using Glide
@@ -131,7 +131,7 @@ public class HomePage_Adapter extends RecyclerView.Adapter<HomePage_Adapter.MyVi
         }catch (Exception ex){
             Toast.makeText(activity, "Error in downloading image", Toast.LENGTH_SHORT).show();;
         }
-    }
+    }*/
 
 
 
