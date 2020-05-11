@@ -16,6 +16,7 @@ import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -23,6 +24,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.cardview.widget.CardView;
@@ -57,6 +59,8 @@ public class MainActivity extends AppCompatActivity {
     Fundamental_Converter fundamental_converter;
     CardView cardView;
     ArrayList<String> dup_emails = new ArrayList<>();
+    private String read_out_name = "", prev_read_out_name = "";
+    private int prev_category = -1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -134,6 +138,8 @@ public class MainActivity extends AppCompatActivity {
                     } else {
                         fundamental_converter = new Fundamental_Converter(list.get(count).getName(), preference.getString("output", "Text"), context);
                     }
+                    prev_read_out_name = list.get(count).getName();
+                    prev_category = list.get(count).getType();
                 } catch (Exception e) {}
             }
         });
@@ -159,6 +165,8 @@ public class MainActivity extends AppCompatActivity {
                     } else {
                         fundamental_converter = new Fundamental_Converter(list.get(count).getName(), preference.getString("output", "Text"), context);
                     }
+                    prev_read_out_name = list.get(count).getName();
+                    prev_category = list.get(count).getType();
                 } catch (Exception e) {}
             }
         });
@@ -250,6 +258,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                try {
+                   count = 0;
                    list.clear();
                    dup_emails.clear();
                    for (DataSnapshot childsnapshot : dataSnapshot.getChildren()) {
@@ -283,6 +292,7 @@ public class MainActivity extends AppCompatActivity {
                    //Toast.makeText(MainActivity.this, "Error in fetching details", Toast.LENGTH_SHORT).show();
                    //  list.clear();
 
+
                    databaseReferenceread.addValueEventListener(new ValueEventListener() {
                        @Override
                        public void onDataChange(DataSnapshot dataSnapshot) {
@@ -301,6 +311,8 @@ public class MainActivity extends AppCompatActivity {
 
                            }
 
+                           read_out_name = list.get(count).getName();
+
 
                            try {
                                contactname.setText(list.get(count).getName());
@@ -311,10 +323,24 @@ public class MainActivity extends AppCompatActivity {
                                    cardView.setCardBackgroundColor(Color.parseColor("Black"));
                                    contactname.setTextColor(Color.parseColor("White"));
                                }
-                               if (list.get(count).getType() == 1) {
-                                   fundamental_converter = new Fundamental_Converter("New Message from " + list.get(count).getName(), preference.getString("output", "Text"), context);
+
+                               if(!prev_read_out_name.equals(read_out_name)) {
+                                   if (list.get(count).getType() == 1) {
+                                       fundamental_converter = new Fundamental_Converter("New Message from " + list.get(count).getName(), preference.getString("output", "Text"), context);
+                                   } else {
+                                       fundamental_converter = new Fundamental_Converter(list.get(count).getName(), preference.getString("output", "Text"), context);
+                                   }
+                                   prev_read_out_name = list.get(count).getName();
+                                   prev_category = list.get(count).getType();
                                } else {
-                                   fundamental_converter = new Fundamental_Converter(list.get(count).getName(), preference.getString("output", "Text"), context);
+                                   if(prev_category!=list.get(count).getType()) {
+                                       if (list.get(count).getType() == 1) {
+                                           fundamental_converter = new Fundamental_Converter("New Message from " + list.get(count).getName(), preference.getString("output", "Text"), context);
+                                       } else {
+                                           fundamental_converter = new Fundamental_Converter(list.get(count).getName(), preference.getString("output", "Text"), context);
+                                       }
+                                       prev_category = list.get(count).getType();
+                                   }
                                }
                            } catch (IndexOutOfBoundsException e) {
 
