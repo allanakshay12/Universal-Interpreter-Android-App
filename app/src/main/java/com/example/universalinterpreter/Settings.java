@@ -1,6 +1,7 @@
 package com.example.universalinterpreter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 
@@ -211,6 +212,8 @@ public class Settings extends AppCompatActivity {
                                     editor.apply();
                                     databaseReference.child(email.getText().toString().trim().replace(".", "+")).child("Name").setValue(name.getText().toString().trim());
                                    // databaseReference.child(email.getText().toString().trim().replace(".", "+")).child("Password").setValue(password.getText().toString().trim());
+                                    Intent intent = new Intent(Settings.this, MainActivity.class);
+                                    startActivity(intent);
                                     finish();
                                 }
                             }

@@ -100,6 +100,7 @@ public class MainActivity extends AppCompatActivity {
         if(!preference.contains(pref_option) || preference.getBoolean(pref_option,false) == (false)){
             Intent intent = new Intent(this, Settings.class);
             startActivity(intent);
+            this.finish();
         }
         String email = preference.getString("Email", "");
 
@@ -296,7 +297,7 @@ public class MainActivity extends AppCompatActivity {
                    databaseReferenceread.addValueEventListener(new ValueEventListener() {
                        @Override
                        public void onDataChange(DataSnapshot dataSnapshot) {
-                           //try {
+                           try {
                            for (DataSnapshot childsnapshot : dataSnapshot.getChildren()) {
                                //  Toast.makeText(activity, childsnapshot.getValue().toString(), Toast.LENGTH_SHORT).show();
 
@@ -352,7 +353,9 @@ public class MainActivity extends AppCompatActivity {
                            //  list.clear();
 
                            databaseReferenceread.removeEventListener(this);
-                           // }
+                            } catch (Exception e) {
+
+                           }
                        }
 
                        @Override
