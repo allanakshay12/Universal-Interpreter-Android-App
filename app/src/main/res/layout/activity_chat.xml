@@ -99,7 +99,8 @@
             android:background="@drawable/vertical_dotted"
             android:layout_alignBottom="@id/Chat_Center"
             android:layout_marginBottom="10dp"
-            android:translationZ="2dp"/>
+            android:translationZ="2dp"
+            android:id="@+id/Chat_Vertical_Line"/>
 
         <TextView
             android:layout_width="match_parent"
@@ -112,14 +113,14 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_toRightOf="@id/Chat_Center"
+            android:layout_toRightOf="@id/Chat_Vertical_Line"
             android:id="@+id/Chat_Right_Area"
             android:layout_above="@id/Chat_Bottom_Area"/>
 
         <TextView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_toLeftOf="@id/Chat_Center"
+        android:layout_toLeftOf="@id/Chat_Vertical_Line"
         android:id="@+id/Chat_Left_Area"
             android:layout_above="@id/Chat_Bottom_Area"/>
 
